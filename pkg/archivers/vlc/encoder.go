@@ -7,11 +7,11 @@ import (
 	"unicode"
 )
 
-func Encode(p string) string {
+func Encode(p string) []byte {
 	binaryText := convertToBin(prepText(p))
 	binChunks := chunks.SplitByChunks(binaryText)
 
-	return binChunks.ToHex().ToString()
+	return binChunks.ToBytes()
 }
 
 func convertToBin(text string) string {

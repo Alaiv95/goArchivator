@@ -37,7 +37,7 @@ func handle(_ *cobra.Command, args []string) {
 
 	packed := vlc.Encode(string(data))
 
-	err = os.WriteFile(lib.FileName(filePath, extension), []byte(packed), 644)
+	err = os.WriteFile(lib.FileName(filePath, extension), packed, 644)
 	if err != nil {
 		log.Fatal(err)
 	}

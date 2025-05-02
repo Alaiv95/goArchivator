@@ -6,11 +6,10 @@ import (
 	"unicode"
 )
 
-func Decode(p string) string {
-	hexChunks := chunks.NewHexChunks(p)
-	binaryChunks := hexChunks.ToBinary()
+func Decode(p []byte) string {
+	binChunks := chunks.NewBinChunks(p)
 	decTree := getEncodingTable().DecodingTree()
-	decodedText := decTree.Decode(binaryChunks.String())
+	decodedText := decTree.Decode(binChunks.String())
 
 	return prepDecodedText(decodedText)
 }
