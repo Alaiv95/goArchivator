@@ -7,7 +7,19 @@ import (
 	"unicode"
 )
 
-func Encode(p string) []byte {
+type Encoder struct {
+	Ext string
+}
+
+func NewEncoder() Encoder {
+	return Encoder{Ext: ".vlc"}
+}
+
+func (e Encoder) GetExt() string {
+	return e.Ext
+}
+
+func (e Encoder) Encode(p string) []byte {
 	binaryText := convertToBin(prepText(p))
 	binChunks := chunks.SplitByChunks(binaryText)
 
