@@ -1,41 +1,14 @@
 package vlc
 
 import (
+	"archiver/pkg/archivers/vlc/table"
 	"testing"
 )
 
-func Test_prepText(t *testing.T) {
-	type args struct {
-		p string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "default",
-			args: args{p: "Big"},
-			want: "!big",
-		},
-		{
-			name: "empty",
-			args: args{p: ""},
-			want: "",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := prepText(tt.args.p); got != tt.want {
-				t.Errorf("prepText() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_convertToBin(t *testing.T) {
 	type args struct {
-		text string
+		text  string
+		table table.EncodingTable
 	}
 	tests := []struct {
 		name string
@@ -44,8 +17,13 @@ func Test_convertToBin(t *testing.T) {
 	}{
 		{
 			name: "default",
-			args: args{text: "!big"},
-			want: "0010000000010010010000100",
+			args: args{text: "!big", table: table.EncodingTable{
+				'!': "00",
+				'b': "01",
+				'i': "10",
+				'g': "11",
+			}},
+			want: "00011011",
 		},
 		{
 			name: "empty",
@@ -55,7 +33,7 @@ func Test_convertToBin(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := convertToBin(tt.args.text); got != tt.want {
+			if got := convertToBin(tt.args.text, tt.args.table); got != tt.want {
 				t.Errorf("convertToBin() = %v, want %v", got, tt.want)
 			}
 		})

@@ -3,6 +3,7 @@ package cli
 import (
 	chunks "archiver/pkg/archivers"
 	"archiver/pkg/archivers/vlc"
+	"archiver/pkg/archivers/vlc/table/shannon_fano"
 	"archiver/pkg/lib"
 	"github.com/spf13/cobra"
 	"io"
@@ -20,7 +21,7 @@ func init() {
 	rootCmd.AddCommand(packCmd)
 }
 
-const extension = ".vlc"
+const extension = ".fano"
 
 func handlePack(_ *cobra.Command, args []string) {
 	if len(args) < 2 {
@@ -54,7 +55,7 @@ func SelectEncoder(alg string) chunks.Encoder {
 
 	switch alg {
 	case "vlc":
-		enc = vlc.NewEncoder()
+		enc = vlc.NewEncoder(shannon_fano.NewGenerator())
 	default:
 		log.Fatal("Unsupported extension")
 	}

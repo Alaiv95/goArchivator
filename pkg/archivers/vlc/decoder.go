@@ -2,12 +2,20 @@ package vlc
 
 import (
 	chunks "archiver/pkg/archivers"
-	"strings"
-	"unicode"
+	"archiver/pkg/archivers/vlc/table"
+	"bytes"
+	"encoding/binary"
+	"encoding/gob"
+	"log"
 )
 
 type Decoder struct {
 	Ext string
+	gen table.Generator
+}
+
+type DecodedTextInfo struct {
+	textLen uint32
 }
 
 func NewDecoder() Decoder {
@@ -15,33 +23,33 @@ func NewDecoder() Decoder {
 }
 
 func (d Decoder) Decode(p []byte) string {
-	binChunks := chunks.NewBinChunks(p)
-	decTree := getEncodingTable().DecodingTree()
-	decodedText := decTree.Decode(binChunks.String())
+	const headerBytes = 4
 
-	return prepDecodedText(decodedText)
+	tableLen, data := binary.BigEndian.Uint32(p[:headerBytes]), p[headerBytes:]
+	binaryTable := data[:tableLen]
+	binaryText := data[tableLen:]
+
+	decTree := deserializeTable(binaryTable)
+	binChunks := chunks.NewBinChunks(binaryText).String()
+	decodedText := decTree.Decode(binChunks)
+
+	return decodedText
 }
 
 func (d Decoder) GetExt() string {
 	return d.Ext
 }
 
-func prepDecodedText(p string) string {
-	buf := strings.Builder{}
-	runes := []rune(p)
-	iter := 0
+func deserializeTable(tableBytes []byte) table.EncodingTable {
+	buf := bytes.NewReader(tableBytes)
+	gobDec := gob.NewDecoder(buf)
 
-	for iter < len(runes) {
-		r := runes[iter]
+	var t table.EncodingTable
 
-		if runes[iter] == '!' {
-			iter++
-			r = unicode.ToUpper(runes[iter])
-		}
-
-		buf.WriteRune(r)
-		iter++
+	err := gobDec.Decode(&t)
+	if err != nil {
+		log.Fatal("Error decoding table", err)
 	}
 
-	return buf.String()
+	return t
 }

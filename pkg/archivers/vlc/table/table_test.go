@@ -1,4 +1,4 @@
-package vlc
+package table
 
 import (
 	"reflect"
@@ -8,12 +8,12 @@ import (
 func Test_encodingTable_DecodingTree(t *testing.T) {
 	tests := []struct {
 		name string
-		et   encodingTable
+		et   EncodingTable
 		want DecodingTree
 	}{
 		{
 			name: "default",
-			et: encodingTable{
+			et: EncodingTable{
 				' ': "11",
 				't': "1001",
 				's': "0101",
@@ -44,7 +44,7 @@ func Test_encodingTable_DecodingTree(t *testing.T) {
 		},
 		{
 			name: "simple",
-			et: encodingTable{
+			et: EncodingTable{
 				' ': "11",
 			},
 			want: DecodingTree{
