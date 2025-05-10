@@ -118,7 +118,7 @@ func TestDecodingTree_Decode(t *testing.T) {
 				Left:  tt.fields.Left,
 				Right: tt.fields.Right,
 			}
-			if got := dt.Decode(tt.args.code); got != tt.want {
+			if got := dt.decode(tt.args.code); got != tt.want {
 				t.Errorf("Decode() = %v, want %v", got, tt.want)
 			}
 		})
